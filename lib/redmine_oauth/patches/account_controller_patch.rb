@@ -51,7 +51,7 @@ module RedmineOauth
           super
         when 'Keycloak'
           logout_user
-          redirect_to "#{site}/realms/#{tenant_id}/protocol/openid-connect/logout?redirect_uri=#{url}"
+          redirect_to "#{site}/realms/#{tenant_id}/protocol/openid-connect/logout??post_logout_redirect_uri=#{url}&client_id=#{id}"
         when 'Okta'
           logout_user
           redirect_to "#{site}/oauth2/v1/logout?id_token_hint=#{id}&post_logout_redirect_uri=#{url}"
