@@ -54,6 +54,8 @@ Redmine::Plugin.register :redmine_oauth do
     self_registration: '0',
     custom_firstname_field: 'given_name',
     custom_lastname_field: 'family_name',
+    auto_assign_projects: '',
+    auto_assign_roles: '',
     update_login: nil,
     oauth_logout: nil,
     oauth_login: nil,

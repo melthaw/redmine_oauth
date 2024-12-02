@@ -117,6 +117,16 @@
         <%= text_field_tag 'settings[custom_lastname_field]', @settings[:custom_lastname_field] %>
         <em class="info"><%= l(:label_default) %>: family_name</em>
       </p>
+      <p>
+        <label><%= l(:oauth_auto_assign_projects) %></label>
+        <%= text_field_tag 'settings[auto_assign_projects]', @settings[:auto_assign_projects] %>
+        <em class="info">Assign to specified projects (using , as splitter) automatically</em>
+      </p>
+      <p>
+        <label><%= l(:oauth_auto_assign_roles) %></label>
+        <%= text_field_tag 'settings[auto_assign_roles]', @settings[:auto_assign_roles] %>
+        <em class="info">Assign to specified roles (using , as splitter) automatically</em>
+      </p>
     </div>
     <p>
       <label><%= l(:oauth_validate_user_roles) %></label>

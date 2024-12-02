@@ -185,6 +185,29 @@ class RedmineOauthController < AccountController
     session.delete :oauth_autologin
   end
 
+
+  # Override : Automatically register a user
+  def register_automatically(user, project, role, &block)
+    # Automatic activation
+    user.activate
+    user.last_login_on = Time.now
+    if user.save
+      unless project.nil?
+        member = Member.new(project: project, user: user)
+        unless role.nil?
+          member.roles << role
+        end
+        member.save
+      end
+
+      self.logged_user = user
+      flash[:notice] = l(:notice_account_activated)
+      redirect_to my_account_path
+    else
+      yield if block
+    end
+  end
+
   def try_to_login(email, info)
     user = User.joins(:email_addresses).where(email_addresses: { address: email }).first
     if user # Existing user
@@ -223,13 +246,25 @@ class RedmineOauthController < AccountController
       user.login = login
       user.random_password
       user.register
+
       case Setting.plugin_redmine_oauth[:self_registration]
       when '1'
         register_by_email_activation(user) do
           onthefly_creation_failed user
         end
       when '3'
-        register_automatically(user) do
+        # add to project
+        project = nil
+        if !Setting.plugin_redmine_oauth[:auto_assign_projects].nil? and !Setting.plugin_redmine_oauth[:auto_assign_projects].blank?
+          project = Project.find(Setting.plugin_redmine_oauth[:auto_assign_projects])
+        end
+
+        role = nil
+        if !Setting.plugin_redmine_oauth[:auto_assign_projects].nil? and !Setting.plugin_redmine_oauth[:auto_assign_projects].blank?
+          role = Role.find(Setting.plugin_redmine_oauth[:auto_assign_roles])
+        end
+
+        register_automatically(user, project, role) do
           onthefly_creation_failed user
         end
       else
